@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Task Manager | Minecraft Edition</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <!-- Top Minecraft Grass Layer -->
+  <div class="header-grass-trim"></div>
+
+  <!-- Toast Notification element -->
+  <div id="toast"></div>
+
+  <!-- Header / Navigation -->
+  <header class="navbar">
+    <div class="nav-container">
+      <div class="brand">
+        <span class="brand-cube"></span>
+        <div class="brand-title">Task <span>Manager</span></div>
+        <span class="brand-badge">MC EDITION</span>
+      </div>
+      <div class="nav-actions">
+        <div class="user-selector-wrapper">
+          <label for="current-user-select">Player:</label>
+          <select id="current-user-select" class="user-select"></select>
+        </div>
+        <button class="btn btn-outline-sm" id="sync-backend-btn" title="Sync with FastAPI backend">
+          🔄 Mode: <span id="mode-text">Local</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main class="main-content">
+    <!-- Live Traction KPI Strip -->
+    <section class="traction-strip">
+      <div class="strip-item">
+        <span class="strip-label">LIVE QUESTS</span>
+        <span class="strip-value" id="stat-pending">0</span>
+      </div>
+      <div class="strip-divider"></div>
+      <div class="strip-item">
+        <span class="strip-label">IN PROGRESS</span>
+        <span class="strip-value" id="stat-accepted">0</span>
+      </div>
+      <div class="strip-divider"></div>
+      <div class="strip-item">
+        <span class="strip-label">COMPLETED</span>
+        <span class="strip-value" id="stat-completed">0</span>
+      </div>
+      <div class="strip-divider"></div>
+      <div class="strip-item highlight">
+        <span class="strip-label">CAMPUS ₹ MOVED</span>
+        <span class="strip-value" id="stat-volume">₹0</span>
+      </div>
+    </section>
+
+    <!-- Navigation Tabs -->
+    <div class="tabs-container">
+      <button class="tab-btn active" data-tab="feed-tab">
+        <!-- Pixel Scroll Icon -->
+        <svg width="18" height="18" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M2 1h12v14H2V1z" fill="#e2c290"/>
+          <path d="M3 2h10v12H3V2z" fill="#f7e1b5"/>
+          <path d="M5 4h6v1H5V4zM5 6h6v1H5V6zM5 8h4v1H5V8z" fill="#8c6239"/>
+        </svg>
+        Live Task Feed
+      </button>
+
+      <button class="tab-btn" data-tab="post-tab">
+        <!-- Pixel Crafting Table Icon -->
+        <svg width="18" height="18" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M1 1h14v14H1V1z" fill="#855b38"/>
+          <path d="M2 2h12v12H2V2z" fill="#a06e42"/>
+          <path d="M3 3h4v4H3V3zM9 3h4v4H9V3zM3 9h4v4H3V9zM9 9h4v4H9V9z" fill="#66462c"/>
+          <path d="M4 4h2v2H4V4zM10 4h2v2h-2V4zM4 10h2v2H4v-2zM10 10h2v2h-2v-2z" fill="#d19c67"/>
+        </svg>
+        Post a Task
+      </button>
+
+      <button class="tab-btn" data-tab="my-tasks-tab">
+        <!-- Pixel Chest Icon -->
+        <svg width="18" height="18" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M1 2h14v12H1V2z" fill="#1e1e1e"/>
+          <path d="M2 3h12v4H2V3zM2 8h12v5H2V8z" fill="#a06e42"/>
+          <path d="M7 6h2v4H7V6z" fill="#dcdcdc"/>
+          <path d="M7 7h2v2H7V7z" fill="#ffffff"/>
+        </svg>
+        Claimed Quests
+      </button>
+
+      <button class="tab-btn" data-tab="pitch-tab">
+        <!-- Pixel Nether Star Icon -->
+        <svg width="18" height="18" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M7 0h2v16H7V0zM0 7h16v2H0V7z" fill="#ffffff"/>
+          <path d="M5 2h6v12H5V2zM2 5h12v6H2V5z" fill="#e0ffff"/>
+          <path d="M4 4h8v8H4V4z" fill="#80deea"/>
+          <path d="M6 6h4v4H6V6z" fill="#ffffff"/>
+        </svg>
+        E-Cell Pitch Mode
+      </button>
+    </div>
+
+    <!-- TAB 1: Live Feed (Screen 1 for Seniors) -->
+    <section id="feed-tab" class="tab-content active">
+      <div class="section-header">
+        <div>
+          <h2>Campus Open Micro-Tasks</h2>
+          <p class="section-sub">Earn quick pocket money between lectures or hostel chill time.</p>
+        </div>
+        <div class="filter-controls">
+          <button class="pill-filter active" data-filter="PENDING">Open (Live)</button>
+          <button class="pill-filter" data-filter="ALL">All Tasks</button>
+          <button class="pill-filter" data-filter="COMPLETED">Completed</button>
+          <button class="btn btn-sm btn-ghost" id="refresh-feed-btn">🔄 Refresh</button>
+        </div>
+      </div>
+
+      <div id="tasks-feed" class="tasks-grid">
+        <div class="loading-state">Loading campus quests...</div>
+      </div>
+    </section>
+
+    <!-- TAB 2: Post Task (Screen 2 for Buyers) -->
+    <section id="post-tab" class="tab-content">
+      <div class="form-card">
+        <div class="form-header">
+          <h2>Need something done? Post a Quest!</h2>
+          <p>Too busy with assignments or just lazy? Post a micro-task and a peer will handle it.</p>
+        </div>
+        
+        <form id="post-task-form">
+          <div class="form-group">
+            <label for="task-title">What is your quest?</label>
+            <input 
+              type="text" 
+              id="task-title" 
+              placeholder="e.g., Print 35-page Lab Manual & deliver outside Lab 4" 
+              required 
+              minlength="3"
+            />
+            <span class="form-hint">Tip: State the exact drop location in the title.</span>
+          </div>
+
+          <div class="form-group">
+            <label for="task-desc">Details & Specific Instructions</label>
+            <textarea 
+              id="task-desc" 
+              rows="3" 
+              placeholder="e.g., Double sided, stapled. Deliver before 2:15 PM outside Computer Lab 4." 
+              required
+            ></textarea>
+          </div>
+
+          <!-- Customer Money Finalizer & Bounty Builder -->
+          <div class="money-finalizer-card">
+            <div class="money-finalizer-header">
+              <div class="finalizer-title">
+                <!-- Pixel Gold Ingot -->
+                <svg width="20" height="20" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M3 4h10v2h2v6h-2v2H3v-2H1V6h2V4z" fill="#c48a12"/>
+                  <path d="M3 5h9v1h2v5h-2v1H4v-1H2V6h1V5z" fill="#fcd835"/>
+                  <path d="M4 5h7v1h1v3H4V5z" fill="#fff59d"/>
+                  <path d="M4 6h5v1H4V6z" fill="#ffffff"/>
+                </svg>
+                <span>Customer Money Finalizer</span>
+              </div>
+              <span class="finalizer-tag">CUSTOMER SETS PRICE</span>
+            </div>
+            <p class="finalizer-desc">As the customer, configure base reward, speed incentives, and location tip to get your quest claimed fast.</p>
+
+            <!-- 1. Base Bounty Setting -->
+            <div class="finalizer-section">
+              <label class="finalizer-label">1. Set Base Bounty Amount</label>
+              <div class="stepper-row">
+                <button type="button" class="btn btn-stepper" onclick="adjustBribe(-50)">-₹50</button>
+                <button type="button" class="btn btn-stepper" onclick="adjustBribe(-10)">-₹10</button>
+                <div class="currency-input-wrapper flex-1">
+                  <span class="currency-symbol">₹</span>
+                  <input 
+                    type="number" 
+                    id="task-bribe" 
+                    min="10" 
+                    max="10000" 
+                    value="70" 
+                    required 
+                    oninput="recalcFinalizer()" 
+                  />
+                </div>
+                <button type="button" class="btn btn-stepper" onclick="adjustBribe(10)">+₹10</button>
+                <button type="button" class="btn btn-stepper" onclick="adjustBribe(50)">+₹50</button>
+              </div>
+
+              <!-- Presets Grid -->
+              <div class="bribe-presets-grid">
+                <button type="button" class="preset-chip" onclick="setPresetBribe(30, this)">
+                  <span>🍵 Snack/Tea</span>
+                  <strong>₹30</strong>
+                </button>
+                <button type="button" class="preset-chip" onclick="setPresetBribe(50, this)">
+                  <span>📄 Print 20p</span>
+                  <strong>₹50</strong>
+                </button>
+                <button type="button" class="preset-chip active" onclick="setPresetBribe(70, this)">
+                  <span>📦 Parcel Drop</span>
+                  <strong>₹70</strong>
+                </button>
+                <button type="button" class="preset-chip" onclick="setPresetBribe(100, this)">
+                  <span>📚 Library Book</span>
+                  <strong>₹100</strong>
+                </button>
+                <button type="button" class="preset-chip" onclick="setPresetBribe(150, this)">
+                  <span>📝 Assignment</span>
+                  <strong>₹150</strong>
+                </button>
+                <button type="button" class="preset-chip" onclick="setPresetBribe(200, this)">
+                  <span>⚡ Urgent Errand</span>
+                  <strong>₹200</strong>
+                </button>
+              </div>
+            </div>
+
+            <!-- 2. Urgency Multiplier -->
+            <div class="finalizer-section">
+              <label class="finalizer-label">2. Urgency Speed Multiplier (Incentivize Seniors)</label>
+              <div class="modifier-row">
+                <div class="modifier-btn active" onclick="setUrgency(0, this)">
+                  <input type="radio" name="urgency" value="0" checked />
+                  <span>🐢 Standard</span>
+                  <small>+₹0</small>
+                </div>
+                <div class="modifier-btn" onclick="setUrgency(20, this)">
+                  <input type="radio" name="urgency" value="20" />
+                  <span>⚡ Fast (&lt;1 hr)</span>
+                  <small>+₹20</small>
+                </div>
+                <div class="modifier-btn" onclick="setUrgency(50, this)">
+                  <input type="radio" name="urgency" value="50" />
+                  <span>🚨 ASAP Rush</span>
+                  <small>+₹50</small>
+                </div>
+              </div>
+            </div>
+
+            <!-- 3. Distance / Effort Allowance -->
+            <div class="finalizer-section">
+              <label class="finalizer-label">3. Distance & Weather Allowance</label>
+              <div class="modifier-row">
+                <div class="modifier-btn active" onclick="setEffort(0, this)">
+                  <input type="radio" name="effort" value="0" checked />
+                  <span>🏠 Same Block</span>
+                  <small>+₹0</small>
+                </div>
+                <div class="modifier-btn" onclick="setEffort(20, this)">
+                  <input type="radio" name="effort" value="20" />
+                  <span>🏛️ Across Campus</span>
+                  <small>+₹20</small>
+                </div>
+                <div class="modifier-btn" onclick="setEffort(30, this)">
+                  <input type="radio" name="effort" value="30" />
+                  <span>🌧️ Rain / Night</span>
+                  <small>+₹30</small>
+                </div>
+              </div>
+            </div>
+
+            <!-- Live HUD Breakdown -->
+            <div class="finalizer-hud">
+              <div class="hud-breakdown">
+                <div>Base: <span id="hud-base">₹70</span></div>
+                <div>Urgency: <span id="hud-urgency">+₹0</span></div>
+                <div>Effort: <span id="hud-effort">+₹0</span></div>
+              </div>
+              <div class="hud-total-box">
+                <span class="hud-total-label">FINAL BROADCAST BOUNTY</span>
+                <span class="hud-total-val" id="hud-total">₹70</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="form-group" style="margin-bottom: 1.5rem;">
+            <label for="task-buyer">Posting As Student</label>
+            <select id="task-buyer" required></select>
+          </div>
+
+          <button type="submit" class="btn btn-primary btn-block" id="post-task-btn">
+            ⚔️ Broadcast Quest to Campus
+          </button>
+        </form>
+      </div>
+    </section>
+
+    <!-- TAB 3: My Claimed Tasks -->
+    <section id="my-tasks-tab" class="tab-content">
+      <div class="section-header">
+        <div>
+          <h2>Quests You Have Claimed</h2>
+          <p class="section-sub">Coordinate with the junior, deliver, and mark as completed to get paid.</p>
+        </div>
+      </div>
+      <div id="claimed-tasks-feed" class="tasks-grid">
+        <div class="loading-state">Checking your claimed quests...</div>
+      </div>
+    </section>
+
+    <!-- TAB 4: E-Cell Pitch & Standalone HTML Showcase -->
+    <section id="pitch-tab" class="tab-content">
+      <div class="pitch-container">
+        <div class="pitch-banner">
+          <div class="pitch-badge">🏆 E-CELL HACKATHON PITCH VIEW</div>
+          <h2>Live Campus Traction & Proof-of-Work</h2>
+          <p class="pitch-subtitle">
+            "We launched 6 hours ago in this hall. Real students have posted tasks, seniors claimed them, and money has changed hands."
+          </p>
+        </div>
+
+        <div class="pitch-metrics-grid">
+          <div class="pitch-card">
+            <div class="metric-num" id="pitch-total">0</div>
+            <div class="metric-title">Quests Posted</div>
+            <div class="metric-desc">Students requesting help</div>
+          </div>
+          <div class="pitch-card">
+            <div class="metric-num" id="pitch-completed">0</div>
+            <div class="metric-title">Fulfilled Quests</div>
+            <div class="metric-desc">Successful handoffs</div>
+          </div>
+          <div class="pitch-card highlight">
+            <div class="metric-num" id="pitch-volume">₹0</div>
+            <div class="metric-title">Total ₹ Transacted</div>
+            <div class="metric-desc">Campus micro-economy velocity</div>
+          </div>
+          <div class="pitch-card">
+            <div class="metric-num" id="pitch-time">&lt; 8 mins</div>
+            <div class="metric-title">Avg. Claim Time</div>
+            <div class="metric-desc">Hyper-local density advantage</div>
+          </div>
+        </div>
+
+        <!-- Standalone HTML File Box -->
+        <div class="pitch-growth-box">
+          <h3>💻 Standalone HTML Application</h3>
+          <p>Zero dependencies, zero backend setup required. Runs directly in any web browser:</p>
+          
+          <div class="html-file-card">
+            <div class="html-icon-container">
+              <!-- Pixelated Command Block / Orange Code </> Icon -->
+              <svg width="54" height="54" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M1 1h14v14H1V1z" fill="#4a2e1b"/>
+                <path d="M2 2h12v12H2V2z" fill="#bd6a38"/>
+                <path d="M4 4h8v8H4V4z" fill="#753d1d"/>
+                <!-- Orange </> tag inside -->
+                <path d="M5 6L3 8L5 10" stroke="#ff5722" stroke-width="1.2" stroke-linecap="square"/>
+                <path d="M11 6L13 8L11 10" stroke="#ff5722" stroke-width="1.2" stroke-linecap="square"/>
+                <path d="M9 5L7 11" stroke="#ff5722" stroke-width="1.2" stroke-linecap="square"/>
+              </svg>
+            </div>
+
+            <div class="html-file-info">
+              <div class="html-file-name">
+                task_manager.html
+                <span class="html-file-badge">HTML5</span>
+              </div>
+              <div class="html-file-meta">Portable Single-File Web App • ~50 KB • 100% Offline Ready</div>
+              <p class="html-file-desc">
+                Everything (UI, styles, logic, state persistence, live feed, post forms & pitch metrics) is self-contained. Open directly in Chrome, Edge, or Firefox.
+              </p>
+            </div>
+
+            <div class="html-actions-row">
+              <button class="btn btn-download-html" onclick="downloadHtmlFile()">
+                📥 Download task_manager.html
+              </button>
+              <button class="btn btn-copy-path" onclick="copyFilePath()">
+                📋 Copy File Path
+              </button>
+            </div>
+          </div>
+
+          <div class="pitch-script-card">
+            <h4>💡 Hackathon Pitch Script (Opening Hook):</h4>
+            <p>
+              <em>"Judges, while other teams spent 24 hours designing slides about hypothetical 5-year financial projections, we launched <strong>Task Manager</strong> in this very hall today. Look at our live database counter: <strong><span id="pitch-script-total">5</span> tasks posted, <span id="pitch-script-completed">2</span> completed, and ₹<span id="pitch-script-volume">360</span> has already changed hands between hackers today.</strong>"</em>
+            </p>
+          </div>
+
+          <div style="margin-top: 1.5rem;">
+            <button class="btn btn-outline-sm" id="reset-db-btn">🔄 Reset to Clean Pitch Demo State</button>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+ 
+  <!-- Minecraft Money Finalizer & Settlement Modal -->
+  <div id="money-finalizer-modal" class="mc-modal-overlay" style="display: none;">
+    <div class="mc-modal-container">
+      <div class="mc-modal-header">
+        <div class="mc-modal-title">
+          <!-- Pixel Emerald Icon -->
+          <svg width="20" height="20" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M4 1h8v2h2v10h-2v2H4v-2H2V3h2V1z" fill="#00aa00"/>
+            <path d="M4 2h8v1h2v10h-2v1H4v-1H2V3h2V2z" fill="#55ff55"/>
+            <path d="M5 3h6v1h1v8H5V3z" fill="#b9f6ca"/>
+            <path d="M5 4h4v1H5V4z" fill="#ffffff"/>
+          </svg>
+          <span id="modal-header-title">Quest Settlement & Money Finalizer</span>
+        </div>
+        <button class="mc-modal-close" onclick="closeFinalizerModal()">✕</button>
+      </div>
+
+      <div class="mc-modal-body">
+        <div class="settlement-task-card">
+          <h4 id="settle-task-title">Loading Quest...</h4>
+          <p id="settle-task-meta" class="settle-meta">Drop: Campus | Status: PENDING</p>
+        </div>
+
+        <div class="finalizer-adjust-box">
+          <label class="finalizer-label" id="settle-amount-label">Customer Finalized Bounty (₹)</label>
+          <div class="stepper-row">
+            <button type="button" class="btn btn-stepper" onclick="adjustSettleAmount(-50)">-₹50</button>
+            <button type="button" class="btn btn-stepper" onclick="adjustSettleAmount(-10)">-₹10</button>
+            <div class="currency-input-wrapper flex-1">
+              <span class="currency-symbol">₹</span>
+              <input type="number" id="settle-final-amount" min="10" max="100000" value="70" oninput="updateSettleTotal()" />
+            </div>
+            <button type="button" class="btn btn-stepper" onclick="adjustSettleAmount(10)">+₹10</button>
+            <button type="button" class="btn btn-stepper" onclick="adjustSettleAmount(50)">+₹50</button>
+          </div>
+
+          <div class="tip-options" id="settle-tip-options">
+            <span style="font-size: 1.05rem; color: var(--mc-text-gray); display:block; margin-bottom: 0.35rem;">Add Customer Tip / Speed Bonus:</span>
+            <div class="quick-bribe-tags">
+              <button type="button" class="bribe-tag" onclick="addTipToSettle(0)">+₹0 Exact</button>
+              <button type="button" class="bribe-tag" onclick="addTipToSettle(10)">+₹10 Great Work</button>
+              <button type="button" class="bribe-tag" onclick="addTipToSettle(20)">+₹20 Fast Delivery</button>
+              <button type="button" class="bribe-tag" onclick="addTipToSettle(50)">+₹50 Heroic Saver</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="settle-total-banner">
+          <div>TOTAL MONEY TO RELEASE:</div>
+          <div class="settle-total-amount" id="settle-display-total">₹70</div>
+        </div>
+      </div>
+
+      <div class="mc-modal-footer">
+        <button class="btn btn-outline-sm" onclick="closeFinalizerModal()">Cancel</button>
+        <button class="btn btn-primary" id="settle-confirm-btn" onclick="confirmFinalizeMoney()">
+          💎 Finalize & Release Payment
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <footer class="footer">
+    <div class="footer-container">
+      <span>⛏️ Task Manager — Minecraft Campus Micro-Task Edition</span>
+      <span>Works standalone in any browser or with FastAPI backend</span>
+    </div>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>

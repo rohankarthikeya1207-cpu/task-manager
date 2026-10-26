@@ -1,0 +1,1350 @@
+    :root {
+      /* Minecraft Palette */
+      --mc-dirt: #855b38;
+      --mc-dirt-dark: #573a23;
+      --mc-grass: #5c8e32;
+      --mc-grass-top: #73b03e;
+      --mc-stone: #686868;
+      --mc-stone-light: #8b8b8b;
+      --mc-stone-dark: #373737;
+      --mc-deepslate: #181a1f;
+      --mc-deepslate-dark: #101216;
+      --mc-gui-bg: #2b2b36;
+      --mc-gui-light: #3f3f4e;
+      --mc-gui-dark: #191920;
+      --mc-border-dark: #000000;
+      --mc-border-light: rgba(255, 255, 255, 0.25);
+
+      /* Accent & Item Colors */
+      --mc-emerald: #55ff55;
+      --mc-emerald-dark: #00aa00;
+      --mc-gold: #ffaa00;
+      --mc-gold-light: #ffd700;
+      --mc-diamond: #55ffff;
+      --mc-diamond-dark: #00aaaa;
+      --mc-redstone: #ff5555;
+      --mc-redstone-dark: #aa0000;
+      --mc-amethyst: #c084fc;
+      --mc-text-white: #ffffff;
+      --mc-text-gray: #aaaaaa;
+      --mc-text-yellow: #ffff55;
+
+      --font-pixel: 'Press Start 2P', monospace;
+      --font-body: 'VT323', monospace;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      image-rendering: pixelated;
+    }
+
+    body {
+      font-family: var(--font-body);
+      font-size: 20px;
+      color: var(--mc-text-white);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      line-height: 1.4;
+      background-color: var(--mc-deepslate-dark);
+      /* Minecraft Deepslate / Bedrock Repeating Pixel Texture */
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%2313151a'/%3E%3Crect x='0' y='0' width='8' height='8' fill='%23101115'/%3E%3Crect x='16' y='0' width='8' height='8' fill='%231b1d24'/%3E%3Crect x='8' y='8' width='8' height='8' fill='%230d0e12'/%3E%3Crect x='24' y='8' width='8' height='8' fill='%2316181f'/%3E%3Crect x='0' y='16' width='8' height='8' fill='%231e2129'/%3E%3Crect x='16' y='16' width='8' height='8' fill='%23101115'/%3E%3Crect x='8' y='24' width='8' height='8' fill='%2316181e'/%3E%3Crect x='24' y='24' width='8' height='8' fill='%230d0e12'/%3E%3C/svg%3E");
+      text-shadow: 2px 2px #000;
+    }
+
+    /* Pixelated Scrollbar */
+    ::-webkit-scrollbar {
+      width: 14px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #181818;
+      border: 2px solid #000;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: var(--mc-stone);
+      border: 2px solid #000;
+      box-shadow: inset 2px 2px 0 #ffffff55, inset -2px -2px 0 #000000aa;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: var(--mc-stone-light);
+    }
+
+    /* Toast Notification (Minecraft Achievement Popup Style) */
+    #toast {
+      position: fixed;
+      top: 1.5rem;
+      right: 1.5rem;
+      background: #252530;
+      border: 3px solid #000;
+      box-shadow: inset 3px 3px 0 #ffffff44, inset -3px -3px 0 #000000aa, 0 8px 0 rgba(0,0,0,0.6);
+      color: #fff;
+      padding: 0.8rem 1.4rem;
+      font-family: var(--font-pixel);
+      font-size: 0.72rem;
+      letter-spacing: 0.5px;
+      transform: translateY(-150%);
+      transition: transform 0.25s cubic-bezier(0.18, 0.89, 0.32, 1.28);
+      z-index: 1000;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+    #toast.show {
+      transform: translateY(0);
+    }
+    #toast.success { border-color: #00aa00; color: var(--mc-emerald); }
+    #toast.info { border-color: #00aaaa; color: var(--mc-diamond); }
+    #toast.warning { border-color: #aa0000; color: var(--mc-redstone); }
+
+    /* Top Minecraft Grass Edge on Header */
+    .header-grass-trim {
+      height: 8px;
+      width: 100%;
+      background: linear-gradient(180deg, #74b33e 0%, #588e2c 50%, #855b38 100%);
+      border-bottom: 2px solid #3d2919;
+    }
+
+    /* Navbar */
+    .navbar {
+      background-color: #21212a;
+      border-bottom: 4px solid #000;
+      box-shadow: 0 4px 0 rgba(0,0,0,0.4);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .nav-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0.75rem 1.5rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 0.85rem;
+    }
+
+    .brand-cube {
+      width: 32px;
+      height: 32px;
+      background: #855b38;
+      border: 3px solid #000;
+      box-shadow: inset 0 8px 0 #5c8e32, inset 2px 2px 0 rgba(255,255,255,0.4), inset -2px -2px 0 rgba(0,0,0,0.6);
+      display: inline-block;
+    }
+
+    .brand-title {
+      font-family: var(--font-pixel);
+      font-size: 1.15rem;
+      color: #fff;
+      letter-spacing: -0.5px;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+
+    .brand-title span {
+      color: var(--mc-gold-light);
+      text-shadow: 2px 2px #573a00;
+    }
+
+    .brand-badge {
+      background: #737373;
+      border: 2px solid #000;
+      box-shadow: inset 2px 2px 0 #ffffff55, inset -2px -2px 0 #00000099;
+      color: var(--mc-text-yellow);
+      font-family: var(--font-pixel);
+      font-size: 0.6rem;
+      padding: 0.3rem 0.6rem;
+      text-transform: uppercase;
+    }
+
+    .nav-actions {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .user-selector-wrapper {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      font-family: var(--font-body);
+      font-size: 1.25rem;
+      color: var(--mc-text-gray);
+    }
+
+    .user-select {
+      background: #14141c;
+      border: 3px solid #000;
+      box-shadow: inset 2px 2px 0 #000, inset -2px -2px 0 #3b3b4d;
+      color: var(--mc-emerald);
+      padding: 0.4rem 0.8rem;
+      font-family: var(--font-body);
+      font-size: 1.25rem;
+      cursor: pointer;
+    }
+
+    .user-select:focus {
+      outline: none;
+      border-color: var(--mc-gold-light);
+    }
+
+    /* Main Container */
+    .main-content {
+      max-width: 1200px;
+      width: 100%;
+      margin: 0 auto;
+      padding: 1.5rem;
+      flex: 1;
+    }
+
+    /* Minecraft HUD Traction Strip */
+    .traction-strip {
+      background: #252530;
+      border: 4px solid #000;
+      box-shadow: inset 3px 3px 0 #ffffff33, inset -3px -3px 0 #000000aa, 0 6px 0 rgba(0,0,0,0.5);
+      padding: 1rem 1.5rem;
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      margin-bottom: 1.75rem;
+      position: relative;
+    }
+
+    .traction-strip::after {
+      content: "";
+      position: absolute;
+      top: -6px;
+      left: 10px;
+      right: 10px;
+      height: 4px;
+      background: #55ff55;
+      box-shadow: 0 0 8px #55ff55;
+    }
+
+    .strip-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.15rem;
+    }
+
+    .strip-label {
+      font-family: var(--font-pixel);
+      font-size: 0.65rem;
+      color: var(--mc-text-gray);
+      letter-spacing: 0.5px;
+    }
+
+    .strip-value {
+      font-family: var(--font-pixel);
+      font-size: 1.35rem;
+      font-weight: 700;
+      color: #fff;
+    }
+
+    .strip-item.highlight .strip-value {
+      color: var(--mc-gold-light);
+      text-shadow: 2px 2px #7a5000;
+    }
+
+    .strip-divider {
+      width: 4px;
+      height: 42px;
+      background: #111116;
+      border-right: 2px solid #3c3c4f;
+    }
+
+    /* Tabs (Minecraft Item Slot Buttons) */
+    .tabs-container {
+      display: flex;
+      gap: 0.85rem;
+      margin-bottom: 1.75rem;
+      overflow-x: auto;
+      padding-bottom: 0.4rem;
+    }
+
+    .tab-btn {
+      background: #5c5c6b;
+      border: 3px solid #000;
+      box-shadow: inset 3px 3px 0 #8b8b99, inset -3px -3px 0 #282833;
+      color: #ffffff;
+      padding: 0.75rem 1.25rem;
+      font-family: var(--font-pixel);
+      font-size: 0.75rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 0.65rem;
+      transition: none;
+      white-space: nowrap;
+      text-shadow: 2px 2px #000;
+    }
+
+    .tab-btn:hover {
+      background: #717182;
+      box-shadow: inset 3px 3px 0 #9e9eb0, inset -3px -3px 0 #20202a;
+    }
+
+    .tab-btn:active {
+      background: #3b3b45;
+      box-shadow: inset 3px 3px 0 #18181e, inset -3px -3px 0 #6e6e7d;
+    }
+
+    .tab-btn.active {
+      background: #2e7d32;
+      box-shadow: inset 3px 3px 0 #66bb6a, inset -3px -3px 0 #143e18;
+      color: var(--mc-text-yellow);
+    }
+
+    .tab-content {
+      display: none;
+    }
+
+    .tab-content.active {
+      display: block;
+      animation: mcFadeIn 0.15s steps(3);
+    }
+
+    @keyframes mcFadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    /* Section Header */
+    .section-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1.5rem;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+
+    .section-header h2 {
+      font-family: var(--font-pixel);
+      font-size: 1.15rem;
+      color: var(--mc-gold-light);
+      letter-spacing: -0.5px;
+    }
+
+    .section-sub {
+      color: var(--mc-text-gray);
+      font-size: 1.25rem;
+      margin-top: 0.35rem;
+    }
+
+    .filter-controls {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .pill-filter {
+      background: #383845;
+      border: 2px solid #000;
+      box-shadow: inset 2px 2px 0 #575769, inset -2px -2px 0 #1c1c24;
+      color: var(--mc-text-gray);
+      padding: 0.35rem 0.85rem;
+      font-family: var(--font-pixel);
+      font-size: 0.65rem;
+      cursor: pointer;
+    }
+
+    .pill-filter.active, .pill-filter:hover {
+      background: #505061;
+      color: #fff;
+      border-color: #000;
+      box-shadow: inset 2px 2px 0 #ffffff55, inset -2px -2px 0 #1c1c24;
+    }
+
+    .pill-filter.active {
+      color: var(--mc-emerald);
+    }
+
+    /* Task Cards Grid */
+    .tasks-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+      gap: 1.5rem;
+    }
+
+    /* Minecraft Inventory Slot Container Card */
+    .task-card {
+      background: #252530;
+      border: 4px solid #000;
+      box-shadow: inset 3px 3px 0 #4a4a5c, inset -3px -3px 0 #111116, 0 6px 0 rgba(0,0,0,0.4);
+      padding: 1.35rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: 1.15rem;
+      position: relative;
+    }
+
+    .task-card:hover {
+      border-color: var(--mc-diamond);
+    }
+
+    .task-card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 0.75rem;
+    }
+
+    .task-title {
+      font-family: var(--font-pixel);
+      font-size: 0.85rem;
+      line-height: 1.5;
+      color: #ffffff;
+    }
+
+    .bribe-badge {
+      background: #14141c;
+      border: 2px solid #000;
+      box-shadow: inset 2px 2px 0 #000, inset -2px -2px 0 #3a3a4c;
+      color: var(--mc-gold-light);
+      padding: 0.35rem 0.65rem;
+      font-family: var(--font-pixel);
+      font-size: 0.85rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      white-space: nowrap;
+    }
+
+    .task-desc {
+      font-family: var(--font-body);
+      font-size: 1.2rem;
+      color: #d1d5db;
+      line-height: 1.35;
+    }
+
+    .task-meta {
+      display: flex;
+      flex-direction: column;
+      gap: 0.35rem;
+      padding: 0.75rem;
+      background: #14141c;
+      border: 2px solid #000;
+      box-shadow: inset 2px 2px 0 #000, inset -2px -2px 0 #282833;
+      font-family: var(--font-body);
+      font-size: 1.15rem;
+      color: var(--mc-text-gray);
+    }
+
+    .meta-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .meta-val {
+      color: #ffffff;
+    }
+
+    .status-badge {
+      padding: 0.2rem 0.5rem;
+      border: 2px solid #000;
+      font-family: var(--font-pixel);
+      font-size: 0.58rem;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .status-badge.pending {
+      background: #aa7700;
+      color: #ffff55;
+      box-shadow: inset 1px 1px 0 #ffaa00, inset -1px -1px 0 #553b00;
+    }
+
+    .status-badge.accepted {
+      background: #007799;
+      color: #55ffff;
+      box-shadow: inset 1px 1px 0 #00aaaa, inset -1px -1px 0 #003b4c;
+    }
+
+    .status-badge.completed {
+      background: #008800;
+      color: #55ff55;
+      box-shadow: inset 1px 1px 0 #00aa00, inset -1px -1px 0 #004400;
+    }
+
+    .task-actions {
+      display: flex;
+      flex-direction: column;
+      gap: 0.6rem;
+      margin-top: 0.25rem;
+    }
+
+    /* Minecraft Styled Buttons */
+    .btn {
+      font-family: var(--font-pixel);
+      font-size: 0.75rem;
+      padding: 0.7rem 1.1rem;
+      cursor: pointer;
+      border: 3px solid #000;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      text-decoration: none;
+      text-shadow: 2px 2px #000;
+      transition: none;
+    }
+
+    .btn:active {
+      transform: translateY(2px);
+    }
+
+    .btn-primary {
+      background: #2e7d32;
+      box-shadow: inset 3px 3px 0 #66bb6a, inset -3px -3px 0 #1b5e20;
+      color: #fff;
+    }
+
+    .btn-primary:hover {
+      background: #388e3c;
+      color: var(--mc-text-yellow);
+    }
+
+    .btn-claim {
+      background: #2e7d32;
+      box-shadow: inset 3px 3px 0 #66bb6a, inset -3px -3px 0 #1b5e20;
+      color: #fff;
+      width: 100%;
+      padding: 0.85rem 1rem;
+      font-size: 0.75rem;
+    }
+
+    .btn-claim:hover {
+      background: #388e3c;
+      color: var(--mc-text-yellow);
+    }
+
+    .btn-complete {
+      background: #0288d1;
+      box-shadow: inset 3px 3px 0 #4fc3f7, inset -3px -3px 0 #01579b;
+      color: white;
+      width: 100%;
+      padding: 0.85rem 1rem;
+      font-size: 0.75rem;
+    }
+
+    .btn-complete:hover {
+      background: #039be5;
+    }
+
+    .btn-outline-sm {
+      background: #383845;
+      box-shadow: inset 2px 2px 0 #575769, inset -2px -2px 0 #1c1c24;
+      color: var(--mc-text-white);
+      font-size: 0.65rem;
+      padding: 0.45rem 0.8rem;
+    }
+
+    .btn-outline-sm:hover {
+      background: #505061;
+    }
+
+    .btn-ghost {
+      background: transparent;
+      border: none;
+      color: var(--mc-text-gray);
+      cursor: pointer;
+      padding: 0.4rem 0.65rem;
+      font-family: var(--font-pixel);
+      font-size: 0.65rem;
+    }
+
+    .btn-ghost:hover {
+      color: var(--mc-emerald);
+    }
+
+    .btn-whatsapp {
+      background: #1b5e20;
+      box-shadow: inset 3px 3px 0 #4caf50, inset -3px -3px 0 #0d3810;
+      color: #fff;
+      font-size: 0.72rem;
+      padding: 0.65rem 0.85rem;
+      text-align: center;
+    }
+
+    .btn-whatsapp:hover {
+      background: #2e7d32;
+      color: var(--mc-text-yellow);
+    }
+
+    .btn-block {
+      width: 100%;
+    }
+
+    /* Post Form Card (Minecraft Crafting Table GUI Theme) */
+    .form-card {
+      max-width: 680px;
+      margin: 0 auto;
+      background: #252530;
+      border: 4px solid #000;
+      box-shadow: inset 3px 3px 0 #4a4a5c, inset -3px -3px 0 #111116, 0 8px 0 rgba(0,0,0,0.5);
+      padding: 2.2rem;
+    }
+
+    .form-header {
+      margin-bottom: 1.75rem;
+    }
+
+    .form-header h2 {
+      font-family: var(--font-pixel);
+      font-size: 1.15rem;
+      color: var(--mc-gold-light);
+      margin-bottom: 0.5rem;
+    }
+
+    .form-header p {
+      color: var(--mc-text-gray);
+      font-size: 1.25rem;
+    }
+
+    .form-group {
+      margin-bottom: 1.35rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.45rem;
+    }
+
+    .form-group label {
+      font-family: var(--font-pixel);
+      font-size: 0.7rem;
+      color: #ffffff;
+    }
+
+    .form-hint {
+      font-size: 1.1rem;
+      color: var(--mc-text-gray);
+    }
+
+    input[type="text"],
+    input[type="number"],
+    textarea,
+    select {
+      background: #14141c;
+      border: 3px solid #000;
+      box-shadow: inset 2px 2px 0 #000, inset -2px -2px 0 #3a3a4c;
+      padding: 0.75rem 0.95rem;
+      color: #ffffff;
+      font-family: var(--font-body);
+      font-size: 1.35rem;
+    }
+
+    input:focus, textarea:focus, select:focus {
+      outline: none;
+      border-color: var(--mc-diamond);
+    }
+
+    .currency-input-wrapper {
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+
+    .currency-symbol {
+      position: absolute;
+      left: 1rem;
+      color: var(--mc-gold-light);
+      font-family: var(--font-pixel);
+      font-size: 1rem;
+    }
+
+    .currency-input-wrapper input {
+      padding-left: 2.2rem;
+      width: 100%;
+      color: var(--mc-gold-light);
+    }
+
+    .quick-bribe-tags {
+      display: flex;
+      gap: 0.5rem;
+      margin-top: 0.5rem;
+      flex-wrap: wrap;
+    }
+
+    .bribe-tag {
+      background: #383845;
+      border: 2px solid #000;
+      box-shadow: inset 2px 2px 0 #575769, inset -2px -2px 0 #1c1c24;
+      color: var(--mc-gold-light);
+      padding: 0.35rem 0.65rem;
+      font-family: var(--font-pixel);
+      font-size: 0.65rem;
+      cursor: pointer;
+    }
+
+    .bribe-tag:hover {
+      background: #505061;
+      color: #ffffff;
+    }
+
+    .form-row {
+      display: flex;
+      gap: 1.25rem;
+    }
+
+    .flex-1 {
+      flex: 1;
+    }
+
+    /* Money Finalizer & Bounty Builder (Customer Controlled) */
+    .money-finalizer-card {
+      background: #1a1a24;
+      border: 3px solid #000;
+      box-shadow: inset 3px 3px 0 #3b3b4f, inset -3px -3px 0 #0d0d12;
+      padding: 1.25rem;
+      margin-bottom: 1.25rem;
+    }
+
+    .money-finalizer-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 0.5rem;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+    }
+
+    .finalizer-title {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      font-family: var(--font-pixel);
+      font-size: 0.85rem;
+      color: var(--mc-gold-light);
+    }
+
+    .finalizer-tag {
+      background: #007799;
+      color: #55ffff;
+      border: 2px solid #000;
+      box-shadow: inset 1px 1px 0 #55ffff, inset -1px -1px 0 #003b4c;
+      font-family: var(--font-pixel);
+      font-size: 0.55rem;
+      padding: 0.2rem 0.5rem;
+      letter-spacing: 0.5px;
+    }
+
+    .finalizer-desc {
+      color: var(--mc-text-gray);
+      font-size: 1.05rem;
+      margin-bottom: 1rem;
+    }
+
+    .finalizer-section {
+      margin-bottom: 1rem;
+      padding-bottom: 0.85rem;
+      border-bottom: 2px dashed #3a3a4c;
+    }
+
+    .finalizer-section:last-of-type {
+      border-bottom: none;
+      padding-bottom: 0.25rem;
+    }
+
+    .finalizer-label {
+      display: block;
+      font-family: var(--font-pixel);
+      font-size: 0.68rem;
+      color: #fff;
+      margin-bottom: 0.5rem;
+    }
+
+    .stepper-row {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      margin-bottom: 0.65rem;
+    }
+
+    .btn-stepper {
+      background: #383845;
+      border: 2px solid #000;
+      box-shadow: inset 2px 2px 0 #575769, inset -2px -2px 0 #1c1c24;
+      color: var(--mc-gold-light);
+      font-family: var(--font-pixel);
+      font-size: 0.65rem;
+      padding: 0.6rem 0.65rem;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+
+    .btn-stepper:hover {
+      background: #505061;
+      color: #ffffff;
+    }
+
+    .btn-stepper:active {
+      transform: translateY(1px);
+    }
+
+    .bribe-presets-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+      gap: 0.5rem;
+    }
+
+    .preset-chip {
+      background: #252533;
+      border: 2px solid #000;
+      box-shadow: inset 2px 2px 0 #3d3d52, inset -2px -2px 0 #111118;
+      color: #cbd5e1;
+      padding: 0.45rem 0.55rem;
+      font-family: var(--font-body);
+      font-size: 1.1rem;
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      line-height: 1.2;
+      transition: none;
+    }
+
+    .preset-chip strong {
+      font-family: var(--font-pixel);
+      font-size: 0.7rem;
+      color: var(--mc-gold-light);
+      margin-top: 0.2rem;
+    }
+
+    .preset-chip:hover {
+      background: #36364a;
+    }
+
+    .preset-chip.active {
+      border-color: var(--mc-gold-light);
+      background: #3a3219;
+      box-shadow: inset 2px 2px 0 #ffaa00, inset -2px -2px 0 #1a1200;
+    }
+
+    .preset-chip.active strong {
+      color: #ffff55;
+    }
+
+    .modifier-row {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+      gap: 0.5rem;
+    }
+
+    .modifier-btn {
+      background: #252533;
+      border: 2px solid #000;
+      box-shadow: inset 2px 2px 0 #3d3d52, inset -2px -2px 0 #111118;
+      padding: 0.5rem 0.75rem;
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      user-select: none;
+    }
+
+    .modifier-btn input[type="radio"] {
+      display: none;
+    }
+
+    .modifier-btn span {
+      font-size: 1.15rem;
+      color: #e2e8f0;
+    }
+
+    .modifier-btn small {
+      font-family: var(--font-pixel);
+      font-size: 0.65rem;
+      color: var(--mc-emerald);
+    }
+
+    .modifier-btn.active {
+      border-color: var(--mc-diamond);
+      background: #19323d;
+      box-shadow: inset 2px 2px 0 #00aaaa, inset -2px -2px 0 #05161d;
+    }
+
+    .modifier-btn.active span {
+      color: #ffffff;
+      font-weight: bold;
+    }
+
+    .modifier-btn.active small {
+      color: var(--mc-diamond);
+    }
+
+    /* Live Finalizer HUD Banner */
+    .finalizer-hud {
+      margin-top: 1rem;
+      background: #101016;
+      border: 3px solid #000;
+      box-shadow: inset 2px 2px 0 #282836, inset -2px -2px 0 #000;
+      padding: 0.85rem 1rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+    }
+
+    .hud-breakdown {
+      display: flex;
+      gap: 1rem;
+      font-size: 1.15rem;
+      color: var(--mc-text-gray);
+      flex-wrap: wrap;
+    }
+
+    .hud-breakdown span {
+      color: #ffffff;
+      font-weight: bold;
+    }
+
+    .hud-total-box {
+      text-align: right;
+    }
+
+    .hud-total-label {
+      display: block;
+      font-family: var(--font-pixel);
+      font-size: 0.55rem;
+      color: var(--mc-gold-light);
+      letter-spacing: 0.5px;
+    }
+
+    .hud-total-val {
+      font-family: var(--font-pixel);
+      font-size: 1.35rem;
+      color: #ffff55;
+      text-shadow: 2px 2px #573a00;
+    }
+
+    /* Modal Overlay (Minecraft Inventory Style) */
+    .mc-modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.78);
+      backdrop-filter: blur(4px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 2000;
+      padding: 1rem;
+    }
+
+    .mc-modal-container {
+      background: #252530;
+      border: 4px solid #000;
+      box-shadow: inset 4px 4px 0 #4a4a5c, inset -4px -4px 0 #111116, 0 12px 0 rgba(0,0,0,0.7);
+      width: 100%;
+      max-width: 520px;
+      padding: 1.5rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1.1rem;
+    }
+
+    .mc-modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 3px solid #000;
+      padding-bottom: 0.85rem;
+    }
+
+    .mc-modal-title {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      font-family: var(--font-pixel);
+      font-size: 0.85rem;
+      color: var(--mc-emerald);
+    }
+
+    .mc-modal-close {
+      background: #aa0000;
+      border: 2px solid #000;
+      box-shadow: inset 2px 2px 0 #ff5555, inset -2px -2px 0 #550000;
+      color: #fff;
+      font-family: var(--font-pixel);
+      font-size: 0.75rem;
+      cursor: pointer;
+      width: 28px;
+      height: 28px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .mc-modal-close:hover {
+      background: #cc0000;
+    }
+
+    .settlement-task-card {
+      background: #14141c;
+      border: 2px solid #000;
+      box-shadow: inset 2px 2px 0 #000, inset -2px -2px 0 #282833;
+      padding: 0.85rem 1rem;
+      margin-bottom: 0.85rem;
+    }
+
+    .settlement-task-card h4 {
+      font-family: var(--font-pixel);
+      font-size: 0.75rem;
+      color: #ffffff;
+      margin-bottom: 0.35rem;
+    }
+
+    .settle-meta {
+      font-size: 1.1rem;
+      color: var(--mc-text-gray);
+    }
+
+    .settle-total-banner {
+      background: #12121a;
+      border: 3px solid #000;
+      box-shadow: inset 2px 2px 0 #2b2b3b, inset -2px -2px 0 #000;
+      padding: 0.85rem 1rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 0.85rem;
+      font-family: var(--font-pixel);
+      font-size: 0.68rem;
+      color: var(--mc-gold-light);
+    }
+
+    .settle-total-amount {
+      font-size: 1.45rem;
+      color: #55ff55;
+      text-shadow: 2px 2px #004400;
+    }
+
+    .mc-modal-footer {
+      display: flex;
+      justify-content: flex-end;
+      gap: 0.75rem;
+      border-top: 2px solid #3a3a4c;
+      padding-top: 1rem;
+    }
+
+    /* Pitch Tab (Nether / Dragon Defeat Theme) */
+    .pitch-container {
+      max-width: 950px;
+      margin: 0 auto;
+    }
+
+    .pitch-banner {
+      background: #252530;
+      border: 4px solid #000;
+      box-shadow: inset 3px 3px 0 #4a4a5c, inset -3px -3px 0 #111116, 0 8px 0 rgba(0,0,0,0.5);
+      padding: 2rem;
+      text-align: center;
+      margin-bottom: 2rem;
+      position: relative;
+    }
+
+    .pitch-banner::after {
+      content: "";
+      position: absolute;
+      top: -4px;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: linear-gradient(90deg, #55ffff, #ffaa00, #55ff55);
+    }
+
+    .pitch-badge {
+      display: inline-block;
+      background: #007799;
+      border: 2px solid #000;
+      box-shadow: inset 2px 2px 0 #55ffff, inset -2px -2px 0 #003b4c;
+      color: white;
+      font-family: var(--font-pixel);
+      font-size: 0.65rem;
+      padding: 0.35rem 0.75rem;
+      margin-bottom: 0.85rem;
+      letter-spacing: 0.5px;
+    }
+
+    .pitch-banner h2 {
+      font-family: var(--font-pixel);
+      font-size: 1.25rem;
+      color: #fff;
+      margin-bottom: 0.5rem;
+    }
+
+    .pitch-subtitle {
+      color: var(--mc-diamond);
+      font-size: 1.35rem;
+      font-style: italic;
+    }
+
+    .pitch-metrics-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1.25rem;
+      margin-bottom: 2rem;
+    }
+
+    .pitch-card {
+      background: #252530;
+      border: 3px solid #000;
+      box-shadow: inset 2px 2px 0 #4a4a5c, inset -2px -2px 0 #111116;
+      padding: 1.5rem;
+      text-align: center;
+    }
+
+    .pitch-card.highlight {
+      border-color: var(--mc-gold-light);
+    }
+
+    .metric-num {
+      font-family: var(--font-pixel);
+      font-size: 1.6rem;
+      color: #fff;
+      margin-bottom: 0.35rem;
+    }
+
+    .pitch-card.highlight .metric-num {
+      color: var(--mc-gold-light);
+      text-shadow: 2px 2px #573a00;
+    }
+
+    .metric-title {
+      font-family: var(--font-pixel);
+      font-size: 0.68rem;
+      color: #fff;
+    }
+
+    .metric-desc {
+      font-size: 1.15rem;
+      color: var(--mc-text-gray);
+      margin-top: 0.25rem;
+    }
+
+    .pitch-growth-box {
+      background: #252530;
+      border: 4px solid #000;
+      box-shadow: inset 3px 3px 0 #4a4a5c, inset -3px -3px 0 #111116, 0 8px 0 rgba(0,0,0,0.5);
+      padding: 2.2rem 2rem;
+      text-align: center;
+    }
+
+    .pitch-growth-box h3 {
+      font-family: var(--font-pixel);
+      font-size: 1.15rem;
+      color: var(--mc-gold-light);
+      margin-bottom: 0.5rem;
+    }
+
+    .pitch-growth-box p {
+      color: var(--mc-text-gray);
+      font-size: 1.25rem;
+      margin-bottom: 1.5rem;
+    }
+
+    /* Minecraft Command Block / HTML File Card */
+    .html-file-card {
+      background: #14141c;
+      border: 4px solid #000;
+      box-shadow: inset 3px 3px 0 #3b3b4f, inset -3px -3px 0 #000, 0 6px 0 rgba(0,0,0,0.4);
+      padding: 2rem;
+      max-width: 580px;
+      margin: 0 auto 1.5rem auto;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 1.25rem;
+      position: relative;
+    }
+
+    .html-file-card::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: linear-gradient(90deg, #ff5722, #ffaa00, #55ff55);
+    }
+
+    .html-file-card:hover {
+      border-color: #ff5722;
+    }
+
+    .html-icon-container {
+      width: 80px;
+      height: 80px;
+      background: #252530;
+      border: 3px solid #000;
+      box-shadow: inset 3px 3px 0 #ff5722, inset -3px -3px 0 #571c00;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .html-file-info {
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.35rem;
+    }
+
+    .html-file-name {
+      font-family: var(--font-pixel);
+      font-size: 1.05rem;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+    }
+
+    .html-file-badge {
+      background: #ff5722;
+      border: 2px solid #000;
+      color: white;
+      font-size: 0.55rem;
+      padding: 0.2rem 0.5rem;
+      letter-spacing: 0.5px;
+    }
+
+    .html-file-meta {
+      font-size: 1.15rem;
+      color: var(--mc-text-gray);
+    }
+
+    .html-file-desc {
+      font-size: 1.2rem;
+      color: #d1d5db;
+      max-width: 440px;
+      line-height: 1.35;
+      margin-top: 0.25rem;
+    }
+
+    .html-actions-row {
+      display: flex;
+      gap: 0.75rem;
+      flex-wrap: wrap;
+      justify-content: center;
+      width: 100%;
+      margin-top: 0.5rem;
+    }
+
+    .btn-download-html {
+      background: #d84315;
+      box-shadow: inset 3px 3px 0 #ff7043, inset -3px -3px 0 #872607;
+      color: white;
+      padding: 0.8rem 1.4rem;
+    }
+
+    .btn-download-html:hover {
+      background: #e64a19;
+      color: var(--mc-text-yellow);
+    }
+
+    .btn-copy-path {
+      background: #383845;
+      box-shadow: inset 2px 2px 0 #575769, inset -2px -2px 0 #1c1c24;
+      color: var(--mc-text-white);
+      padding: 0.8rem 1.2rem;
+    }
+
+    .btn-copy-path:hover {
+      background: #505061;
+      border-color: #ff5722;
+    }
+
+    /* Pitch Script Guide */
+    .pitch-script-card {
+      background: #14141c;
+      border: 3px solid #000;
+      box-shadow: inset 2px 2px 0 #000, inset -2px -2px 0 #282833;
+      padding: 1.25rem;
+      text-align: left;
+      margin-top: 1.75rem;
+      font-size: 1.2rem;
+      color: #cbd5e1;
+    }
+
+    .pitch-script-card h4 {
+      font-family: var(--font-pixel);
+      font-size: 0.75rem;
+      color: var(--mc-gold-light);
+      margin-bottom: 0.5rem;
+    }
+
+    /* Empty / Loading states */
+    .loading-state, .empty-state {
+      grid-column: 1 / -1;
+      text-align: center;
+      padding: 3.5rem 1rem;
+      color: var(--mc-text-gray);
+      font-family: var(--font-pixel);
+      font-size: 0.8rem;
+    }
+
+    /* Footer */
+    .footer {
+      border-top: 4px solid #000;
+      background: #1e1e26;
+      padding: 1.25rem 0;
+      margin-top: 2.5rem;
+      font-family: var(--font-pixel);
+      font-size: 0.6rem;
+      color: var(--mc-text-gray);
+    }
+
+    .footer-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 1.5rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+    }
+
+    @media (max-width: 768px) {
+      .nav-container {
+        flex-direction: column;
+        gap: 0.75rem;
+        align-items: flex-start;
+      }
+      .traction-strip {
+        flex-direction: column;
+        gap: 0.85rem;
+        padding: 1.25rem 1rem;
+      }
+      .strip-divider {
+        display: none;
+      }
+      .form-row {
+        flex-direction: column;
+      }
+      .pitch-metrics-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+      .html-actions-row {
+        flex-direction: column;
+      }
+    }
